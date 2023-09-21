@@ -1,0 +1,6 @@
+## Terrafrom excludes 
+# .backup file may include secret info
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform_hosts/terraform.tfstate
+terraform_hosts/terraform.tfstate.backup
