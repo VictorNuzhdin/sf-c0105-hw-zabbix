@@ -1,9 +1,0 @@
-[local_server]
-localhost
-
-[centos_servers]
-192.168.230.130
-192.168.230.131
-
-[all:vars]
-ansible_ssh_pass=<SET_REMOTE_HOSTS_PASSWORD>
