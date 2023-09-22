@@ -4,3 +4,5 @@ terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform_hosts/terraform.tfstate
 terraform_hosts/terraform.tfstate.backup
+terraform_hosts__canceled/terraform.tfstate
+terraform_hosts__canceled/terraform.tfstate.backup
