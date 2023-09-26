@@ -191,11 +191,9 @@ $ cat terraform_hosts/makeHosts.sh
 Скриншот02: Группа управляемых ВМ (Yandex Cloud - Instance Group) созданная с помощью Terraform <br>
 ![screen](_screens/step07__terraform__03_instanceGroup_1_review.png?raw=true)
 <br>
-![screen](_screens/step07__terraform__03_instances.png?raw=true)
-<br>
 
 Скриншот03: Список запущеных ВМ в "Yandex Cloud - Compute Cloud" <br>
-![screen](_screens/step07__terraform__04_instances.png?raw=true)
+![screen](_screens/step07__terraform__03_instances.png?raw=true)
 <br>
 
 Скриншот04: Подключенные Хосты/Агенты на Zabbix Сервере и Дашборды для отображения Метрик Хостов <br>
