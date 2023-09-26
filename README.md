@@ -183,7 +183,7 @@ $ cat terraform_hosts/makeHosts.sh
 ### 05. Результат работы веб-приложения
 
 Скриншот01: Служебный хост "srv" с которого будет происходить мониторинг и управление (настроен https) <br>
-![screen](_screens/step01__letsencrypt__srv-dotspace-ru__1.png?raw=true)
+![screen](_screens/step08__srv-dotspace-ru__webpage.png?raw=true)
 <br>
 ![screen](_screens/step01__letsencrypt__srv-dotspace-ru__2.png?raw=true)
 <br>
