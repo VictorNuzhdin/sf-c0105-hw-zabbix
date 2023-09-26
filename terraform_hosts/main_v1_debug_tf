@@ -1,0 +1,129 @@
+##--Описание коннектора Облачного Провайдера (в дс. Yandex.Cloud)
+terraform {
+  required_providers {
+    yandex = {
+      source  = "yandex-cloud/yandex"
+      version = "0.84.0" # версию необходимо указать только при первичной инициализации Terraform
+    }
+  }
+}
+
+##--Локальные переменные
+##
+variable "yc_token" { type=string }
+
+locals {
+  ## создание токена авторизации (срок жизни: 12 часов)
+  ## $ export TF_VAR_yc_token=$(yc iam create-token) && echo $TF_VAR_yc_token
+  #
+  #..общие параметры
+  iam_token        = "${var.yc_token}"                  # iam токен авторизации
+  cloud_id         = "b1g0u201bri5ljle0qi2"             # id Облака
+  folder_id        = "b1gqi8ai4isl93o0qkuj"             # id Каталога
+  access_zone      = "ru-central1-b"                    # зона доступности (размещение ВМ в конкретном датацентре)
+  netw_name        = "acme-net"                         # имя Сети к которой будут подключены ВМ
+  net_id           = "enpjul7bs1mq29s7m5gf"             # id Сети
+  net_sub_name     = "acme-net-sub2"                    # имя Подсети (в одной Сети может быть несколько подСетей)
+  net_sub_id       = "e2lbvjotvmelh1nslcrr"             # id Подсети к которой будет подключена ВМ
+  #
+  vm_default_login = "ubuntu"                           # Ubuntu image default username
+  ssh_keys_dir     = "/home/devops/.ssh"                # каталог размещения ключевой ssh-пары на локальном хосте
+  ssh_pubkey_path  = "/home/devops/.ssh/id_ed25519.pub" # public ssh-ключ для авторизации по ключу на ВМ (будет добавлен на ВМ в /home/ubuntu/.ssh/authorized_keys)
+  ssh_privkey_path = "/home/devops/.ssh/id_ed25519"     # private ssh-ключ для авторизации по ключу на ВМ (используется в провиженерах при подключении)
+  #
+  vm_platform      = "standard-v2"
+  vm_cores         = 2
+  vm_core_fraction = 5
+  vm_memory        = 2
+  vm_disk0id       = "fd8clogg1kull9084s9o"             # используемая версия ОС в качестве загрузочной (id из Yandex Cloud Marketplace)
+  vm_disk0size     = 8                                  # выделяемый размер загрузочного диска для ВМ1, ГБ (от 8 ГБ, далее зависит от задач)
+  vm_disk0type     = "network-hdd"                      # тип загрузочного носителя (network-hdd | network-ssd)
+  vm_serialenabled = 0                                  # активирована или нет серийная консоль для возможности управления ВМ через веб-интерфейс (0|1)
+  vm_maydisabled   = true                               # режим обслуживания ВМ при сервисных работах в облаке - может или нет быть отключена принудительно
+  vm_nat_mode      = true                               # включен или выключен NAT интерфейс для которого создается публичный ipv4 адрес и режим его работы
+  #..частные параметры
+  vm1_name         = "host1"                            # отображаемое в списке имя ВМ1
+  vm1_hostname     = "host1"                            # сетевое имя ВМ1
+  vm1_ipv4_local   = "10.0.20.3"                        # IPv4-адрес создаваемого локального интерфейса ВМ1 (1 и 2 адреса в диапазоне ЗАРЕЗЕРВИРОВАНЫ под Шлюз и DNS-сервер)
+  vm2_name         = "host2"
+  vm2_hostname     = "host2"
+  vm2_ipv4_local   = "10.0.20.4"
+  #..tests
+  ipv4_base = "10.0.20.10"
+  hostnum_int   = 1
+  hostnum_str   = "1"
+}
+##--Yandex Cloud Marketplace
+##  Ubuntu 22.04 LTS (family_id: ubuntu-2204-lts, image_id: fd8clogg1kull9084s9o);
+
+##--Авторизация на стороне провайдера и указание Ресурсов с которыми будет работать Terraform
+provider "yandex" {
+  token           = local.iam_token
+  cloud_id        = local.cloud_id
+  folder_id       = local.folder_id
+  zone            = local.access_zone
+}
+
+##----------------------------------------------------------------------------------------
+##--Создаем VM1 -- Управляемый хост
+resource "yandex_compute_instance" "host1" {
+  name            = local.vm1_name
+  hostname        = local.vm1_hostname
+  zone            = local.access_zone
+  platform_id     = local.vm_platform
+
+  ## Конфигурация виртуальных CPU и RAM
+  resources {
+    cores         = local.vm_cores
+    core_fraction = local.vm_core_fraction
+    memory        = local.vm_memory
+  }
+
+  ## Конфигурация технического обслуживания по расписанию
+  scheduling_policy {
+    preemptible   = local.vm_maydisabled
+  }
+
+  ## Конфигурация загрузочного диска (включает образ на основе которого создается ВМ (из Yandex.Cloud Marketplace)
+  boot_disk {
+    initialize_params {
+      image_id    = local.vm_disk0id
+      type        = local.vm_disk0type
+      size        = local.vm_disk0size
+    }
+  }
+
+  ## Конфигурация сетевого интерфейса
+  network_interface {
+    subnet_id   = local.net_sub_id
+    #ip_address = "10.0.20.1"              # ОШИБКА :: rpc error: code = FailedPrecondition desc = Requested address 10.0.20.1 not available
+    #ip_address = "10.0.20.2"              # ОШИБКА :: rpc error: code = FailedPrecondition desc = Requested address 10.0.20.2 not available
+    #ip_address = "10.0.20.3"              # ошибки нет (первые 2 адреса из любого диапазона выделяются под шлюз (x.x.x.1) и DNS-сервер (x.x.x.2))
+    ip_address  = local.vm1_ipv4_local     # РАБОТАЕТ :: ip-адрес взят из локальной переменной
+    
+    #ip_address = local.ipv4_base + local.hostnum                   # "10.0.20.10" + 1 :: ОШИБКА :: Unsuitable value for left operand: a number is required.
+    #ip_address = join(".", [10, 0, 20, 10 + local.hostnum_int])    # РАБОТАЕТ :: создана ВМ "host1" с адресом "10.0.20.11"
+    #ip_address = join(".", [10, 0, 20, 10 + local.hostnum_str])    # РАБОТАЕТ :: создана ВМ "host1" с адресом "10.0.20.11" (конвертация строки в число НЕ потребовалось)
+    #ip_address = cidrhost("10.0.20.0/24", 10 + local.hostnum_int)  # РАБОТАЕТ :: создана ВМ "host1" с адресом "10.0.20.11"
+    #ip_address = cidrhost("10.0.20.0/24", 10 + local.hostnum_str)  # РАБОТАЕТ :: создана ВМ "host1" с адресом "10.0.20.11"
+    #
+    ##..т.о по тестам выше видно, что ip-адрес можно назначать разными способами и при этом работает автоматическое приведение типов (строка в число)
+    #
+    nat         = local.vm_nat_mode
+  }
+
+  ## Конфигурация авторизации пользователей на создаваемой ВМ
+  metadata = {
+    serial-port-enable = local.vm_serialenabled
+    #ssh-keys = "ubuntu:${file("${local.ssh_pubkey_path}")}"
+    ssh-keys = "${local.vm_default_login}:${file("${local.ssh_pubkey_path}")}"
+  }
+
+} ## << "yandex_compute_instance"
+
+
+##--Сети и подсети
+##..в Сервисе "Virtual Private Cloud" (vpc) ранее была Создана Сеть "acme-net" и подсеть "acme-net-sub2"
+##  *пересоздавать каждый раз сеть и подсеть не имеет смысла для целей экономии финансовых ресурсов,
+##   поэтому текущие создаваемые ВМ будут подключены к этой уже существующей подсети с CIDR ["10.0.10.0/28"]
+## 

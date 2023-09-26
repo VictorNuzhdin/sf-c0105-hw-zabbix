@@ -1,0 +1,64 @@
+## Hashicorp Developer - Terraform - Configuration Language - Expressions - Strings and Templates
+## https://developer.hashicorp.com/terraform/language/expressions/strings
+## https://jeffbrown.tech/terraform-heredoc-jsonencode/
+#
+##-v4
+## YAML output (применяется "<<-EOT" вместо "<<EOT" чтобы можно было делать отступы в начале которые не влияют на конечный yaml результат)
+/*
+output "yaml_output" {
+  value = <<-EOT
+  hosts:
+    host:
+      name: "${yandex_compute_instance.host1.name}"
+      ipv4_internal: "${yandex_compute_instance.host1.network_interface.0.ip_address}"
+      ipv4_external: "${yandex_compute_instance.host1.network_interface.0.nat_ip_address}"
+    host:
+      name: "${yandex_compute_instance.host2.name}"
+      ipv4_internal: "${yandex_compute_instance.host2.network_interface.0.ip_address}"
+      ipv4_external: "${yandex_compute_instance.host2.network_interface.0.nat_ip_address}"
+  EOT
+}
+*/
+/**
+Outputs:
+
+yaml_output = <<EOT
+hosts:
+  host:
+    name: "host1"
+    ipv4_internal: "10.0.20.3"
+    ipv4_external: "158.160.20.143"
+  host:
+    name: "host2"
+    ipv4_internal: "10.0.20.4"
+    ipv4_external: "158.167.45.15"
+
+EOT
+*/
+
+## terraform output -raw yaml_output
+## terraform output -raw yaml_output > output.yaml
+## cat output.yaml
+/**
+hosts:
+  host:
+    name: "host1"
+    ipv4_internal: "10.0.20.3"
+    ipv4_external: "158.160.20.143"
+  host:
+    name: "host2"
+    ipv4_internal: "10.0.20.4"
+    ipv4_external: "158.167.45.15"
+*/
+
+#
+# terraform validate
+# terraform apply -auto-approve
+# terraform refresh
+# terraform output
+# terraform output -raw yaml_output
+# terraform output -raw yaml_output > output.yaml
+# terraform output -json yaml_output
+#
+# terraform destroy -auto-approve && terraform validate && terraform plan && terraform apply -auto-approve
+#

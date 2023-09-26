@@ -1,0 +1,30 @@
+## Hashicorp Developer - Terraform - Configuration Language - Expressions - Strings and Templates
+## https://developer.hashicorp.com/terraform/language/expressions/strings
+## https://jeffbrown.tech/terraform-heredoc-jsonencode/
+#
+##-v1
+/*
+output "vm1_info" {
+  value = "${yandex_compute_instance.host1.name} :: ${yandex_compute_instance.host1.network_interface.0.ip_address} :: ${yandex_compute_instance.host1.network_interface.0.nat_ip_address}"
+  description = "Instance 1 info."
+  sensitive   = false
+}
+
+output "vm2_info" {
+  value = "${yandex_compute_instance.host2.name} :: ${yandex_compute_instance.host2.network_interface.0.ip_address} :: ${yandex_compute_instance.host2.network_interface.0.nat_ip_address}"
+  description = "Instance 2 info."
+  sensitive   = false
+}
+*/
+/**
+  Outputs:
+
+  vm1_info = "host1 :: 10.0.20.3 :: 158.160.23.112"
+  vm2_info = "host2 :: 10.0.20.4 :: 158.160.5.48"
+*/
+
+#
+# terraform validate
+# terraform apply -auto-approve
+# terraform refresh
+# terraform output

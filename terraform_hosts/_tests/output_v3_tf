@@ -1,0 +1,35 @@
+## Hashicorp Developer - Terraform - Configuration Language - Expressions - Strings and Templates
+## https://developer.hashicorp.com/terraform/language/expressions/strings
+## https://jeffbrown.tech/terraform-heredoc-jsonencode/
+#
+##-v3
+## Heredoc output example
+/*
+output "heredoc_output" {
+  value = <<EOT
+1st line
+2nd line
+..etc
+EOT
+}
+*/
+/**
+Outputs:
+
+heredoc_output = <<EOT
+1st line
+2nd line
+..etc
+
+EOT
+*/
+
+#
+# terraform validate
+# terraform apply -auto-approve
+# terraform refresh
+# terraform output
+# terraform output -raw heredoc_output > output.yaml
+#
+# terraform destroy -auto-approve && terraform validate && terraform plan && terraform apply -auto-approve
+#

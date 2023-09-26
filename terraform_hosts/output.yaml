@@ -1,0 +1,9 @@
+hosts:
+  host:
+    name: "host1"
+    ipv4_internal: "10.0.20.3"
+    ipv4_external: "158.160.20.143"
+  host:
+    name: "host2"
+    ipv4_internal: "10.0.20.4"
+    ipv4_external: "158.167.45.15"

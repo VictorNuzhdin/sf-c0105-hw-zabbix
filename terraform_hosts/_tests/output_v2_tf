@@ -1,0 +1,37 @@
+## Hashicorp Developer - Terraform - Configuration Language - Expressions - Strings and Templates
+## https://developer.hashicorp.com/terraform/language/expressions/strings
+## https://jeffbrown.tech/terraform-heredoc-jsonencode/
+#
+##-v2
+## JSON output :: какаято хрень с мусором а не JSON!
+/*
+output "json_output" {
+  value = jsonencode({
+    "${yandex_compute_instance.host1.name}" = {
+      "ipv4_internal" = "${yandex_compute_instance.host1.network_interface.0.ip_address}",
+      "ipv4_external" = "${yandex_compute_instance.host1.network_interface.0.nat_ip_address}"
+    },
+    "${yandex_compute_instance.host2.name}" = {
+      "ipv4_internal" = "${yandex_compute_instance.host2.network_interface.0.ip_address}",
+      "ipv4_external" = "${yandex_compute_instance.host2.network_interface.0.nat_ip_address}"
+    }
+  })
+}
+*/
+/**
+Outputs:
+
+json_output = "{\"host1\":{\"ipv4_external\":\"51.250.110.75\",\"ipv4_internal\":\"10.0.20.3\"},\"host2\":{\"ipv4_external\":\"158.160.1.231\",\"ipv4_internal\":\"10.0.20.4\"}}"
+*/
+
+#
+# terraform validate
+# terraform apply -auto-approve
+# terraform refresh
+# terraform output
+# terraform output -raw json_output
+# terraform output -raw json_output > output.yaml
+# terraform output -json json_output
+#
+# terraform destroy -auto-approve && terraform validate && terraform plan && terraform apply -auto-approve
+#

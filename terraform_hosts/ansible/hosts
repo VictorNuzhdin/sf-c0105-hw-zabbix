@@ -1,0 +1,9 @@
+## generatedAt: 2023-09-22 22:34:45
+#
+[zabbix_server]
+localhost
+
+[zabbix_agents]
+
+[all:vars]
+ansible_ssh_pass=<SET_REMOTE_HOSTS_PASSWORD>

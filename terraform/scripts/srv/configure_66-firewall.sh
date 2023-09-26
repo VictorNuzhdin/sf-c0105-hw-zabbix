@@ -32,14 +32,20 @@ echo '## Step02 - Allow incoming HTTP/S for Apache/Nginx web servers..' >> $LOG_
 sudo ufw allow 80
 sudo ufw allow 443
 
+echo '## Step03 -- Allow Incoming TCP connections from Zabbix Agents..' >> $LOG_PATH
+sudo ufw allow 10051/tcp comment 'Allows Incoming conn from Zabbix Agents'
+echo "" >> $LOG_PATH
+
+
 echo '## Step66 - Enabling firewall..' >> $LOG_PATH
 #sudo ufw enable        ## Stupid interactive warning: Command may disrupt existing ssh connections. Proceed with operation (y|n)?
 ufw --force enable
 echo "" >> $LOG_PATH
 
 echo '## Step77 - Getting firewall status..' >> $LOG_PATH
-sudo ufw status >> $LOG_PATH
+sudo ufw status numbered >> $LOG_PATH
 echo "" >> $LOG_PATH
+
 
 echo "" >> $LOG_PATH
 echo "-----------------------------------------------------------------------------" >> $LOG_PATH

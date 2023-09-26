@@ -21,6 +21,17 @@ Terraform IaC-конфигурация для создания 2х групп в
     2. если [1] не получится, то разработать соответсвующие Роли для "Ansible" для настройки Zabbix сервера и агенттов
     3. если [1] и [2] не получится (или это потребует много времени), настроить созданные хосты вручную по ssh
 
+2023.09.26 :: Произведена полуавтоматическая настройка Zabbix Сервера и Zabbix Агентов с TLS шифрацией при передаче Метрик
+    - Zabbix Сервер (веб страница, страница авторизации и сокет для подключения Zabbix Агентов):
+      https://srv.dotspace.ru/
+      http://srv.dotspace.ru:8080/
+      srv.dotspace.ru:10051
+    - Zabbix Агенты (веб страница, и сокет для подключения Zabbix Сервера):
+      http://host1.dotspace.ru/
+      http://host2.dotspace.ru/
+      host1.dotspace.ru:10050
+      host2.dotspace.ru:10050
+
 2023.09.22 :: Выявлена проблема в результате чего от идеи пришлось отказаться
     - изначально я планировал использовать механизм "Yandex Cloud Instance Group" для создания однотипных ВМ по шаблону
     - частично это получилось и если в разделе "scale_policy.fixed_scale" указать "size = 3" (scale_policy.fixed_scale.size = 3)
@@ -185,6 +196,12 @@ $ cat terraform_hosts/makeHosts.sh
 
 Скриншот03: Список запущеных ВМ в "Yandex Cloud - Compute Cloud" <br>
 ![screen](_screens/step07__terraform__04_instances.png?raw=true)
+<br>
+
+Скриншот04: Подключенные Хосты/Агенты на Zabbix Сервере и Дашборды для отображения Метрик Хостов <br>
+![screen](_screens/step08__zabbix__01_hosts.png?raw=true)
+![screen](_screens/step08__zabbix__02_dashboard_host1.png?raw=true)
+![screen](_screens/step08__zabbix__03_dashboard_host2.png?raw=true)
 <br>
 
 ----

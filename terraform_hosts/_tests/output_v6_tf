@@ -1,0 +1,21 @@
+## v6
+## v2
+/*
+output "oneline_output" {
+  value = join(", ", [for ipaddr in yandex_compute_instance.host1.network_interface.0.nat_ip_address[*]: "http://${ipaddr}"])
+}
+*/
+/**
+Outputs:
+
+oneline_output = "http://158.160.17.1"
+*/
+
+#
+# terraform validate
+# terraform apply -auto-approve
+# terraform refresh
+# terraform output
+#
+# terraform destroy -auto-approve && terraform validate && terraform plan && terraform apply -auto-approve
+#

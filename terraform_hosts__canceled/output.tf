@@ -6,13 +6,13 @@ output "ig_hosts_ipv4_public" {
   sensitive   = false
 }
 /**
-  $ terrafrotm refresh
-  $ terrafrotm output
+  $ terraform refresh
+  $ terraform output
 
   Outputs:
 
   ig_hosts_ipv4_public = tolist([
-    "158.160.69.43",
-    "158.160.77.108",
+    "84.201.178.239",
+    "84.201.179.226",
   ])
 */
